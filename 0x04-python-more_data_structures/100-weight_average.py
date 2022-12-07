@@ -2,18 +2,16 @@
 
 def weight_average(my_list=[]):
 
-    weight = 0
-
-    product = []
-
-    if len(my_list) == 0:
+    if not my_list:
 
         return 0
 
-    for i in my_list:
+    res = 0.0
 
-        weight += i[1]
+    s_list = list(t[0] * t[1] for t in my_list)
 
-        product.append(i[0] * i[1])
+    w_list = list(t[1] for t in my_list)
 
-    return sum(product) / 
+    res = sum(s_list) / sum(w_list)
+
+    return res
