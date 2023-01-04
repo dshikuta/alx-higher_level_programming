@@ -1,20 +1,94 @@
-#!/usr/bin/python3
+===================================================
+Tests for text_indentation in 0-add_integer.py
+===================================================
 
-"""
-A function that prints My name is <first name> <last name>
-"""
-def say_my_name(first_name, last_name=""):
+>>> say_my_name = __import__('3-say_my_name').say_my_name
 
-    """function that print complete name"""
+>>> say_my_name("Douglas", "Ken")
 
-    if type(first_name) != str or first_name == "":
+My name is Douglas Ken
 
-        raise TypeError("first_name must be a string")
+>>> say_my_name("Angaza", 4)
 
-    if type(last_name) != str:
+Traceback (most recent call last):
 
-        raise TypeError("last_name must be a string")
+TypeError: last_name must be a string
 
-    """print(f"{My name is {first_name} {last_name}")"""
+>>> say_my_name("Douglas", None)
 
-    print("My name is {} {}".format(first_name, last_name))
+Traceback (most recent call last):
+
+TypeError: last_name must be a string
+
+>>> say_my_name("Douglas", {})
+
+Traceback (most recent call last):
+
+TypeError: last_name must be a string
+
+
+>>> say_my_name("Douglas", 8)
+
+Traceback (most recent call last):
+
+TypeError: last_name must be a string
+
+>>> say_my_name([], "Ken")
+
+Traceback (most recent call last):
+
+TypeError: first_name must be a string
+
+>>> say_my_name(8, "Ken")
+
+Traceback (most recent call last):
+
+TypeError: first_name must be a string
+
+
+
+>>> say_my_name([[1, 2, 3], [4, 5, 6], [7, 8, 9]], "Ken")
+
+Traceback (most recent call last):
+
+TypeError: first_name must be a string
+
+
+
+>>> say_my_name("Angaza", 69)
+
+Traceback (most recent call last):
+
+TypeError: last_name must be a string
+
+
+
+>>> say_my_name("Angaza", 1)
+
+Traceback (most recent call last):
+
+TypeError: last_name must be a string
+
+
+
+>>> say_my_name(None, "Ken")
+
+Traceback (most recent call last):
+
+TypeError: first_name must be a string
+
+
+
+>>> say_my_name([1, 2, 3], "Ken")
+
+Traceback (most recent call last):
+
+TypeError: first_name must be a string
+
+
+
+>>> say_my_name()
+
+Traceback (most recent call last):
+
+TypeError: say_my_name() missing 1 required positional argument: 'first_name'
