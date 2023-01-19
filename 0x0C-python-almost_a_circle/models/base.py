@@ -1,108 +1,231 @@
 #!/usr/bin/python3
-import unittest
-from models.base import Base
-from models.rectangle import Rectangle
-from models.square import Square
+'''
+Create a folder named models with an empty file __init__.py
+inside - with this file, the folder will become a Python module
+'''
 import json
-import pep8
-class TestBaseClass(unittest.TestCase):
+import csv
+
+class Base:
     '''
-    Setup and style tests
+    Base class
     '''
+    __nb_objects = 0
+
+    def __init__(self, id=None):
+
+        '''
+
+        Constructor
+
+        '''
+
+        if id is not None:
+
+            self.id = id
+
+        else:
+
+            Base.__nb_objects += 1
+
+            self.id = Base.__nb_objects
+
+
+
+    @staticmethod
+
+    def to_json_string(list_dictionaries):
+
+        '''
+
+        Turn dictionary representation
+
+        into JSON
+
+        '''
+
+        if list_dictionaries is None:
+
+            return "[]"
+
+        return json.dumps(list_dictionaries)
+
+
+
+    @staticmethod
+
+    def from_json_string(json_string):
+
+        '''
+
+        Returns list of
+
+        dictionaries from JSON
+
+        '''
+
+        if json_string is None:
+
+            return []
+
+        return json.loads(json_string)
+
+
+
     @classmethod
-    def setUp(self):
-        Base._Base__nb_objects = 0
-        pass
+
+    def save_to_file(cls, list_objs):
+
+        '''
+
+        Saves JSON of dictionary
+
+        to a file <Class name>.json
+
+        '''
+
+        listdict = []
+
+        if not list_objs:
+
+            list_objs = []
+
+        for items in list_objs:
+
+            listdict.append(items.to_dictionary())
+
+
+
+        with open('{}.json'.format(cls.__name__), 'w', encoding='utf-8') as f:
+
+            f.write(cls.to_json_string(listdict))
+
+
+
     @classmethod
-    def tearDownClass(self):
+
+    def create(cls, **dictionary):
+
         '''
-        Wipe state
+
+        Returns instance with
+
+        all attributes set
+
         '''
-        pass
-    def test_is_private(self):
+
+        if cls.__name__ is 'Rectangle':
+
+            newInstance = cls(1, 1)
+
+            newInstance.update(**dictionary)
+
+            return newInstance
+
+        if cls.__name__ is 'Square':
+
+            newInstance = cls(1)
+
+            newInstance.update(**dictionary)
+
+            return newInstance
+
+        else:
+
+            return None
+
+
+
+    @classmethod
+
+    def load_from_file(cls):
+
         '''
-        Is nb_object private
+
+        Returns a list
+
+        of instances
+
         '''
-        print('__nbv_object is private')
-        self.assertTrue(hasattr(Base, '_Base__nb_objects'), 0)
-    def test_pep8(self):
-        pep8_style = pep8.StyleGuide(quit=True)
-        pep_check = pep8_style.check_files(['models/base.py'])
-        self.assertEqual(pep_check.total_errors, 0, 'Pep8 Error in file')
-    def test_docstring(self):
-        self.assertIsNotNone(Base.__doc__)
-    def test_id_1(self):
-        base1 = Base()
-        self.assertEqual(base1.id, 1)
-    def test_id_2(self):
+
+        instanceList = []
+
+        try:
+
+            with open('{}.json'.format(cls.__name__), 'r',
+
+                      encoding='utf-8') as f:
+
+                objectList = cls.from_json_string(f.read())
+
+        except IOError:
+
+            return []
+
+        for dictionary in objectList:
+
+            instanceList.append(cls.create(**dictionary))
+
+        return instanceList
+
+
+
+    @classmethod
+
+    def save_to_file_csv(cls, list_objs):
+
         '''
-        Does id accept params
+
+        Wrte to csv
+
         '''
-        base_instance_1 = Base(12)
-        base_instance_2 = Base()
-        base_instance_3 = Base()
-        base_instance_4 = Base()
-        self.assertEqual(base_instance_1.id, 12)
-        self.assertEqual(base_instance_2.id, 1)
-        self.assertEqual(base_instance_3.id, 2)
-        self.assertEqual(base_instance_4.id, 3)
-    def test_id_3(self):
-        obj = Base(None)
-        self.assertEqual(obj.id, 1)
-    def test_id_4(self):
-        b1 = Base()
-        b2 = Base()
-        b3 = Base(12)
-        b4 = Base()
-        b5 = Base()
-        self.assertEqual(b5.id, 4)
-    def test_string(self):
-        b1 = Base("Hello")
-        self.assertEqual(b1.id, "Hello")
-    def test_float(self):
+
+        listToDictionary = []
+
+        if list_objs is not None:
+
+            list_objs = []
+
+        for items in list_objs:
+
+            listToDictionary.append(items.to_dictionary())
+
+
+
+        with open('{}.csv'.format(cls.__name__), 'w', encoding='utf-8') as f:
+
+            writer = csv.writer(f)
+
+            writer.writerows(list_objs)
+
+
+
+    @classmethod
+
+    def load_from_file_csv(cls):
+
         '''
-        Float overflow
+
+        Returns a list
+
+        of instances
+
         '''
-        base1 = Base(float('inf'))
-        self.assertEqual(base1.id, float('inf'))
-    def test_to_json_string(self):
-        '''
-        to_json_string method test
-        '''
-        rect1 = Rectangle(4, 8, 15, 16)
-        list_dict = rect1.to_dictionary()
-        json_dict = Base.to_json_string([list_dict])
-        self.assertEqual(str(type(json_dict)), "<class 'str'>")
-    def test_to_json_none(self):
-        '''
-        to_json_string empty
-        '''
-        json_empty = Base.to_json_string(None)
-        self.assertEqual(json_empty, '[]')
-    def test_rectangle_to_file(self):
-        '''
-        Rectangle save_to_file method
-        '''
-        Rectangle.save_to_file([])
-        with open('Rectangle.json') as f:
-            self.assertEqual(f.read(), '[]')
-    def test_square_to_file(self):
-        '''
-        Square save_to_file method
-        '''
-        Square.save_to_file([])
-        with open('Square.json') as f:
-            self.assertEqual(f.read(), '[]')
-    def test_to_json(self):
-        dict1 = {'id': 1, 'x': 2, 'size': 10, 'y': 1}
-        dict2 = {'id': 89, 'x': 0, 'size': 4, 'y': 3}
-        json_string = Base.to_json_string([dict1, dict2])
-        jload = json.loads(json_string)
-        self.assertEqual(jload, [dict1, dict2])
-        self.assertTrue(isinstance(json_string, str))
-    def test_from_json_to_str(self):
-        json_test = '[{"x": 2, "width": 10, "id": 1, "height": 7, "y": 8}]'
-        json_str = Base.from_json_string(json_test)
-        self.assertTrue(isinstance(json_str, list))
-    def test_from_json_to_str_2(self):
-        self.assertEqual(Base.from_json_string(None), [])
+
+        instanceList = []
+
+        try:
+
+            with open('{}'.format(cls.__name__), 'r', encoding='utf-8') as f:
+
+                objectList = cls.from_json_string(f.read())
+
+        except IOError:
+
+            return []
+
+        for dictionary in objectList:
+
+            instanceList.append(cls.create(**dictionary))
+
+        return instanceList
